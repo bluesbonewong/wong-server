@@ -2,6 +2,7 @@ import * as http from "http";
 import {IncomingMessage, ServerResponse} from "http";
 import * as fs from "fs";
 import * as p from "path";
+import * as url from "url";
 
 // 创建Server
 const server = http.createServer();
@@ -10,26 +11,26 @@ const publicDirPath = p.resolve(__dirname, 'public');
 
 // 监听request
 server.on('request', (request: IncomingMessage, response: ServerResponse) => {
-    const {method, url, headers} = request;
-    console.log(url);
+    const {method, url: path, headers} = request;
+    const {pathname} = new URL(path, `https://${request.headers.host}`);
 
-    switch (url) {
+    switch (pathname) {
         case "/index.html":
-            fs.readFile(publicDirPath + url, (err, data) => {
+            fs.readFile(publicDirPath + pathname, (err, data) => {
                 if (err) throw err;
                 response.end(data);
             });
             break;
         case "/style.css":
             response.setHeader("Content-Type", "text/css; charset=utf-8"); // 不同的文件的content-type最好设置一下
-            fs.readFile(publicDirPath + url, (err, data) => {
+            fs.readFile(publicDirPath + pathname, (err, data) => {
                 if (err) throw err;
                 response.end(data);
             });
             break;
         case "/main.js":
             response.setHeader("Content-Type", "text/javascript; charset=utf-8");
-            fs.readFile(publicDirPath + url, (err, data) => {
+            fs.readFile(publicDirPath + pathname, (err, data) => {
                 if (err) throw err;
                 response.end(data);
             });
