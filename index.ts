@@ -2,7 +2,6 @@ import * as http from "http";
 import {IncomingMessage, ServerResponse} from "http";
 import * as fs from "fs";
 import * as p from "path";
-import * as url from "url";
 
 // 创建Server
 const server = http.createServer();
@@ -14,27 +13,17 @@ server.on('request', (request: IncomingMessage, response: ServerResponse) => {
     const {method, url: path, headers} = request;
     const {pathname} = new URL(path, `https://${request.headers.host}`);
 
-    switch (pathname) {
-        case "/index.html":
-            fs.readFile(publicDirPath + pathname, (err, data) => {
-                if (err) throw err;
-                response.end(data);
-            });
-            break;
-        case "/style.css":
-            response.setHeader("Content-Type", "text/css; charset=utf-8"); // 不同的文件的content-type最好设置一下
-            fs.readFile(publicDirPath + pathname, (err, data) => {
-                if (err) throw err;
-                response.end(data);
-            });
-            break;
-        case "/main.js":
-            response.setHeader("Content-Type", "text/javascript; charset=utf-8");
-            fs.readFile(publicDirPath + pathname, (err, data) => {
-                if (err) throw err;
-                response.end(data);
-            });
-    }
+    fs.readFile(publicDirPath + pathname, (err, data) => {
+        if (err) {
+            response.statusCode = 404;
+            response.setHeader("Content-Type", "text/html; charset=utf-8");
+            response.end("文件不存在");
+
+            // throw err;
+        }
+
+        response.end(data);
+    });
 });
 
 // 监听端口
