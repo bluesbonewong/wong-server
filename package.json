@@ -1,0 +1,11 @@
+{
+  "name": "blues-server",
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": "git@github.com:bluesbonewong/wong-server.git",
+  "author": "wangruilin <bluesbonewong@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^14.14.37"
+  }
+}
