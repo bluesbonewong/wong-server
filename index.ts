@@ -5,8 +5,10 @@ import * as p from "path";
 
 // 创建Server
 const server = http.createServer();
-
 const publicDirPath = p.resolve(__dirname, 'public');
+
+// 全局变量
+let cacheMaxAge = 3600 * 24 * 365; // 默认一年失效
 
 // 监听request
 server.on('request', (request: IncomingMessage, response: ServerResponse) => {
@@ -35,6 +37,8 @@ server.on('request', (request: IncomingMessage, response: ServerResponse) => {
                 response.end("服务器繁忙");
             }
         } else {
+            // 返回文件内容
+            response.setHeader("Cache-Control", "public, max-age=100000");
             response.end(data);
         }
     });
