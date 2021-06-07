@@ -11,9 +11,15 @@ const publicDirPath = p.resolve(__dirname, 'public');
 // 监听request
 server.on('request', (request: IncomingMessage, response: ServerResponse) => {
     const {method, url: path, headers} = request;
+
+    if (method !== "GET") {
+        response.statusCode = 405;
+        response.end("请求方式错误");
+        return;
+    }
+
     let {pathname} = new URL(path, `https://${request.headers.host}`);
     pathname = pathname === "/" ? "/index.html" : pathname; // 对直接访问域名进行容错
-
     fs.readFile(publicDirPath + pathname, (err, data) => {
         if (err) {
             console.log(err);
